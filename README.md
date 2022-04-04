@@ -24,13 +24,14 @@ This repository contains the code for the EMNLP 2021 Findings paper: [Detecting 
 # Dependencies & Pre-requisite
 
 * Refer to requirements.txt for package requirements
+* Mainly, you need the following python packages: *pandas*, *praw*, *psaw*, *convokit*, *tqdm*, *beautifulsoup4*, *scikit-learn* for data collection, and *torch*, *transformers*, *datasets* for model training/inference.
 * You need your own Reddit account and a pair of API ID & Secret key. If you don't have one you can obtain by registering an app [here](https://www.reddit.com/prefs/apps/).
 
 
 # Data & Trained Models:
 You can find three items in this Google Drive folder: [drive.google.com/drive/folders/1IB823a-xc0WT9903ECbmBrEdCR8cppFp](https://drive.google.com/drive/folders/1IB823a-xc0WT9903ECbmBrEdCR8cppFp)
 
-1. ~~`max500_subs100000_redacted.zip`: NormVio Dataset that has texts redacted. We instead provide Reddit IDs of comments and posts.~~ (UPDATE: we pushed the redacted data to this repo. You can find them under `data/processed/`)
+1. `max500_subs100000_redacted.zip`: NormVio Dataset that has texts redacted. We instead provide Reddit IDs of comments and posts. 
 
 2. `training_data_for_rule_classifiers.zip`: Reddit community rules and their categories. Provided by the authors of [Reddit Rules! Characterizing an Ecosystem of Governance (ICWSM 2018)](https://ojs.aaai.org/index.php/ICWSM/article/view/15033). Please cite the paper if you plan to use this data.
 
@@ -38,7 +39,7 @@ You can find three items in this Google Drive folder: [drive.google.com/drive/fo
 
 # Reconstructing the Original Dataset Used in the Paper
 Due to privacy concerns, we only release a redacted version of NormVio, which has texts of comments and posts removed. The released data contains a collection of posts and comments and their Reddit IDs. You can reconstruct the original data using the provided IDs. We also provide a script that will check if the comments or posts are still in the PushShift data dump and recover. You can simply follow the steps listed below:
-- download the redacted zip file from the google drive folder above and then unzip it
+- download the redacted zip file from the google drive folder above and then unzip it. Place it under `data/processed/`
 - set up an environment (for example, make a new virtualenv environment and run `pip install -r requirements.txt`)
 - first, go to src/config.py and make sure you fill out your Reddit API info into these entries: `PRAW_CLIENT_ID`, `PRAW_CLIENT_SECRET`, `PRAW_USERNAME`, `PRAW_PW`
 - Run `python src/restore_from_redacted.py --path_data DOWNLOADED_REDACTED_DATA --path_save SAVE_PATH -v`. Note: you can also set `--mod_original_comment` to reconstruct the original comments from moderators left at the time of moderation.
