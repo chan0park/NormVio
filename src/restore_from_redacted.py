@@ -14,6 +14,7 @@ from config import NUM_PROCESS
 parser = argparse.ArgumentParser()
 parser.add_argument('--path_data', "-data", type=str, required=True, help='redacted data path')
 parser.add_argument('--path_save', "-save", type=str, required=False, default=None, help='where to save the restored data splits')
+parser.add_argument('--mod_original_comment', "-m", action='store_true', default=False, help='whether to scrape the moderator\'s original comment or not')
 parser.add_argument('--verbose', "-v", action='store_true', default=False, help='verbose')
 args = parser.parse_args()
 
@@ -115,15 +116,21 @@ def restore_context(data):
             num_restored += 1
     return restored
 
-def restore_final(data):
+def restore_final(data, bool_moderator_comment=False):
     restored, cids_by_subreddit = [], {}
     num_row, num_restored = 0, 0
     for _, row in data.iterrows():
         subreddit = row['subreddit']
         if subreddit not in cids_by_subreddit:
             cids_by_subreddit[subreddit] = []
-        final_comment = row['redacted_final_comment']
-        cid = extract_comment_id_from_id(final_comment['id'])
+        
+        if bool_moderator_comment:
+            # scraping moderator's comment
+            cid = row['comment_id']
+        else:
+            # scraping the final comment (which violated one of the community norms)
+            cid = extract_comment_id_from_id(row['redacted_final_comment']['id'])
+        
         cids_by_subreddit[subreddit].append(cid)
     
     def get_one_subreddit_comments(subreddit, subreddit_cids):
@@ -146,7 +153,11 @@ def restore_final(data):
             fetched_comments.update(_fetched)
 
     for _, row in data.iterrows():
-        cid = extract_comment_id_from_id(row['redacted_final_comment']['id'])
+        final_comment = row['redacted_final_comment']
+        if bool_moderator_comment:
+            cid = row['comment_id']
+        else:
+            cid = extract_comment_id_from_id(final_comment['id'])
         if cid not in fetched_comments:
             restored.append(None)
             continue
@@ -158,15 +169,18 @@ def restore_final(data):
         if text in ('[removed]',['[deleted]']):
             restored.append(None)
             continue
-        final_comment['tokens'] = text
-        restored.append(final_comment)
+        if bool_moderator_comment:
+            restored.append(text)
+        else:
+            final_comment['tokens'] = text
+            restored.append(final_comment)
     return restored    
 
 scraper = RedditScraper()
 for split in ['test','dev','train']:
     data = pd.read_json(join(args.path_data, f"{split}.jsonl"),lines=True)
     assert all([('redacted_'+colname in data.columns) for colname in ['context','final_comment']])
-    # data = data.sample(20)
+    data = data.head(10)
     original_size = len(data)
     if args.verbose:
         print(f"[{split}] restoring final comments")
@@ -177,6 +191,11 @@ for split in ['test','dev','train']:
         print(f"[{split}] restoring context comments")
     data['context'] = restore_context(data)
     # data = data.drospna(subset=['context']) # uncomment this line to remove examples without context
+    
+    if args.mod_original_comment:
+        if args.verbose:
+            print(f"[{split}] restoring moderators' original comments")
+        data['mod_comment'] = restore_final(data, bool_moderator_comment=True)
     
     del data['redacted_context']
     del data['redacted_final_comment']
