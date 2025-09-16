@@ -29,7 +29,7 @@ This repository contains the code for the EMNLP 2021 Findings paper: [Detecting 
 
 
 # Data & Trained Models:
-You can find three items in this Google Drive folder: [drive.google.com/drive/folders/1IB823a-xc0WT9903ECbmBrEdCR8cppFp](https://drive.google.com/drive/folders/1IB823a-xc0WT9903ECbmBrEdCR8cppFp)
+You can find three items in this Google Drive folder: [https://drive.google.com/drive/folders/1nG9a5-ToIIVRVQFFsbLjAqFxdFWER-w1](https://drive.google.com/drive/folders/1nG9a5-ToIIVRVQFFsbLjAqFxdFWER-w1)
 
 1. `max500_subs100000_redacted.zip`: NormVio Dataset that has texts redacted. We instead provide Reddit IDs of comments and posts. 
 
