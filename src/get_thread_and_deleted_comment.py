@@ -419,8 +419,8 @@ class CommentTraverser():
 
         sub_comments = random.sample(sub_comments, min(max_num, len(sub_comments)))
         for sub_comment in sub_comments:
-            comment_history.append(sub_comment)
-            self.travese_recursively(sub_comment, moded_comment_id, comment_history, depth+1)
+            new_history = comment_history + [sub_comment]
+            self.travese_recursively(sub_comment, moded_comment_id, new_history, depth+1)
     
     def get_unmoded(self, moded_comment, moded_comment_id):
         self.traverse(moded_comment, moded_comment_id)
