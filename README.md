@@ -1,3 +1,6 @@
+**⚠️ Under investigation (September 2026):** Zoher Kachwala (Indiana University) has reported issues in the generation of the unmoderated threads and in the rule mapping. Please see PR #9 for details and a proposed fix. We are looking into their impact on the data and results and will update this note. Until then, please use those parts of the dataset with caution.
+
+---
 This repository contains the code for the EMNLP 2021 Findings paper: [Detecting Community Sensitive Norm Violations in Online Conversations](https://aclanthology.org/2021.findings-emnlp.288.pdf). Please cite this paper if you use this dataset:
 
 ```
